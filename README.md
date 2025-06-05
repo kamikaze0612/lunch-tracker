@@ -1,20 +1,20 @@
-# Lunch Tracker API Documentation
+# Өдрийн хоолны зардал бүртгэлийн API баримт бичиг
 
-## Overview
+## Тойм
 
-This API helps colleagues track lunch expenses and manage group balances. The system supports multiple groups, flexible participation, and automatic balance calculations.
+Энэ API нь ажилчдад өдрийн хоолны зардлыг бүртгэж, бүлгийн дансны үлдэгдлийг удирдахад тусалдаг. Систем нь олон бүлэг, уян хатан оролцоо, дансны тооцоог хөтөлдөг.
 
-## Base URL
+## Үндсэн URL
 
 ```
 http://localhost:8000
 ```
 
-## API Endpoints
+## API endpoints
 
-### Users
+### Хэрэглэгчид
 
-#### Create User
+#### Хэрэглэгч үүсгэх
 
 ```http
 POST /users
@@ -23,23 +23,23 @@ Content-Type: application/json
 {
   "name": "John Doe",
   "email": "john@company.com",
-  "avatar": "https://example.com/avatar.jpg" // optional
+  "avatar": "https://example.com/avatar.jpg" // заавал биш
 }
 ```
 
-#### Get All Users
+#### Бүх хэрэглэгчийг авах
 
 ```http
 GET /users
 ```
 
-#### Get User by ID
+#### ID-аар хэрэглэгч авах
 
 ```http
 GET /users/1
 ```
 
-#### Update User
+#### Хэрэглэгч шинэчлэх
 
 ```http
 PATCH /users/1
@@ -51,45 +51,45 @@ Content-Type: application/json
 }
 ```
 
-#### Delete User
+#### Хэрэглэгч устгах
 
 ```http
 DELETE /users/1
 ```
 
-### Groups
+### Бүлгүүд
 
-#### Create Group
+#### Бүлэг үүсгэх
 
 ```http
 POST /groups?createdBy=1
 Content-Type: application/json
 
 {
-  "name": "Office Lunch Group",
-  "description": "Daily lunch expenses for the team"
+  "name": "Оффисын өдрийн хоолны бүлэг",
+  "description": "Багийн өдөр тутмын хоолны зардал"
 }
 ```
 
-#### Get All Groups
+#### Бүх бүлгийг авах
 
 ```http
 GET /groups
 ```
 
-#### Get User's Groups
+#### Хэрэглэгчийн бүлгүүдийг авах
 
 ```http
 GET /groups/user/1
 ```
 
-#### Get Group with Members
+#### Гишүүдтэй бүлгийг авах
 
 ```http
 GET /groups/1/members
 ```
 
-#### Add Users to Group
+#### Бүлэгт хэрэглэгч нэмэх
 
 ```http
 POST /groups/1/members
@@ -100,15 +100,15 @@ Content-Type: application/json
 }
 ```
 
-#### Remove User from Group
+#### Бүлэгээс хэрэглэгч хасах
 
 ```http
 DELETE /groups/1/members/2
 ```
 
-### Transactions
+### Гүйлгээнүүд
 
-#### Create Transaction (Custom Split)
+#### Гүйлгээ үүсгэх
 
 ```http
 POST /transactions
@@ -118,7 +118,7 @@ Content-Type: application/json
   "groupId": 1,
   "paidBy": 1,
   "totalAmount": "40.00",
-  "description": "Lunch at Italian Restaurant",
+  "description": "Итали ресторанд хоол",
   "transactionDate": "2024-01-15",
   "participants": [
     {
@@ -137,7 +137,7 @@ Content-Type: application/json
 }
 ```
 
-#### Create Quick Split (Equal Split)
+#### Хурдан гүйлгээ үүсгэх (тэнцүү хуваалт)
 
 ```http
 POST /transactions/quick-split
@@ -147,46 +147,46 @@ Content-Type: application/json
   "groupId": 1,
   "paidBy": 1,
   "totalAmount": "40.00",
-  "description": "Lunch at Italian Restaurant",
+  "description": "Итали ресторанд хоол",
   "transactionDate": "2024-01-15",
   "participantIds": [1, 2, 3, 4]
 }
 ```
 
-#### Get Transaction by ID
+#### ID-аар гүйлгээ авах
 
 ```http
 GET /transactions/1
 ```
 
-#### Get Group Transactions
+#### Бүлгийн гүйлгээнүүдийг авах
 
 ```http
 GET /transactions/group/1?limit=20&offset=0
 ```
 
-#### Get Group Balance Sheet
+#### Бүлгийн дансны тооцооны хуудас авах
 
 ```http
 GET /transactions/group/1/balance-sheet
 ```
 
-Response:
+Хариу:
 
 ```json
 {
   "groupId": 1,
-  "groupName": "Office Lunch Group",
+  "groupName": "Оффисын өдрийн хоолны бүлэг",
   "members": [
     {
       "userId": 1,
       "userName": "Max",
-      "balance": "26.67" // positive = should receive money
+      "balance": "26.67" // эерэг = мөнгө авах ёстой
     },
     {
       "userId": 2,
       "userName": "David",
-      "balance": "-13.33" // negative = owes money
+      "balance": "-13.33" // сөрөг = мөнгө төлөх ёстой
     },
     {
       "userId": 3,
@@ -199,7 +199,7 @@ Response:
 }
 ```
 
-#### Settle Balances
+#### Дансаа нийлүүлэх
 
 ```http
 POST /transactions/group/1/settle?settledBy=1
@@ -207,22 +207,22 @@ Content-Type: application/json
 
 {
   "groupId": 1,
-  "description": "Monthly settlement - January 2024"
+  "description": "Сарын тооцоо - 2024 оны 1-р сар"
 }
 ```
 
-#### Get Group Settlements History
+#### Бүлгийн тооцооны түүхийг авах
 
 ```http
 GET /transactions/group/1/settlements
 ```
 
-## Example Usage Flow
+## Ашиглалтын жишээ
 
-### 1. Setup Users and Group
+### 1. Хэрэглэгч болон бүлэг тохируулах
 
 ```bash
-# Create users
+# Хэрэглэгчид үүсгэх
 curl -X POST http://localhost:3000/users \
   -H "Content-Type: application/json" \
   -d '{"name": "Max", "email": "max@company.com"}'
@@ -239,71 +239,71 @@ curl -X POST http://localhost:3000/users \
   -H "Content-Type: application/json" \
   -d '{"name": "Christina", "email": "christina@company.com"}'
 
-# Create group
+# Бүлэг үүсгэх
 curl -X POST "http://localhost:3000/groups?createdBy=1" \
   -H "Content-Type: application/json" \
-  -d '{"name": "Office Lunch Group", "description": "Daily lunch expenses"}'
+  -d '{"name": "Оффисын өдрийн хоолны бүлэг", "description": "Өдөр тутмын хоолны зардал"}'
 
-# Add users to group
+# Бүлэгт хэрэглэгчид нэмэх
 curl -X POST http://localhost:3000/groups/1/members \
   -H "Content-Type: application/json" \
   -d '{"userIds": [2, 3, 4]}'
 ```
 
-### 2. Record Lunch Expenses
+### 2. Өдрийн хоолны зардал бүртгэх
 
 ```bash
-# Max pays $40 for 4 people (equal split)
+# Max $40 төлнө. Хүн бүр $10 ийн хоол идсэн (тэнцүү хуваагдал)
 curl -X POST http://localhost:3000/transactions/quick-split \
   -H "Content-Type: application/json" \
   -d '{
     "groupId": 1,
     "paidBy": 1,
     "totalAmount": "40.00",
-    "description": "Italian Restaurant",
+    "description": "Итали ресторан",
     "transactionDate": "2024-01-15",
     "participantIds": [1, 2, 3, 4]
   }'
 
-# David pays $30 for 3 people
+# David $30 төлнө. Хүн бүр $10 ийн хоол идсэн (тэнцүү хуваагдал)
 curl -X POST http://localhost:3000/transactions/quick-split \
   -H "Content-Type: application/json" \
   -d '{
     "groupId": 1,
     "paidBy": 2,
     "totalAmount": "30.00",
-    "description": "Sushi Place",
+    "description": "Суши газар",
     "transactionDate": "2024-01-16",
     "participantIds": [1, 2, 3]
   }'
 ```
 
-### 3. Check Balance Sheet
+### 3. Дансны тооцоо шалгах
 
 ```bash
 curl http://localhost:3000/transactions/group/1/balance-sheet
 ```
 
-### 4. Settle Balances
+### 4. Дансны үлдэгдэл тооцоо хийх
 
 ```bash
 curl -X POST "http://localhost:3000/transactions/group/1/settle?settledBy=1" \
   -H "Content-Type: application/json" \
-  -d '{"groupId": 1, "description": "End of month settlement"}'
+  -d '{"groupId": 1, "description": "Сарын төгсгөлийн тооцоо"}'
 ```
 
-## Error Responses
+## Серверээс ирэх хариунууд
 
-All endpoints return appropriate HTTP status codes:
+Бүх endpoint-с зохих HTTP статус кодуудыг буцаана:
 
-- `200` - Success
-- `201` - Created
-- `400` - Bad Request (validation errors)
-- `404` - Not Found
-- `409` - Conflict (e.g., duplicate email)
-- `500` - Internal Server Error
+- `200` - Амжилттай
+- `201` - Үүсгэгдсэн
+- `400` - Буруу хүсэлт
+- `404` - Олдсонгүй
+- `409` - Зөрчил (жишээ нь давхцсан имэйл)
+- `500` - Серверийн дотоод алдаа
 
-Error response format:
+Алдааны хариуны формат:
 
 ```json
 {
