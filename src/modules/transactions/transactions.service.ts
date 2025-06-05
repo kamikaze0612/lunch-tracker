@@ -5,20 +5,23 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { eq, and, desc, count } from 'drizzle-orm';
-import { Database } from '../database/database.providers';
+
 import { databaseProviderToken } from '@/common/constants/provider_tokens.constants';
-import { transactions } from '@/database/schemas/transactions.schema';
-import { transactionParticipants } from '@/database/schemas/transaction-participants.schema';
-import { users } from '@/database/schemas/users.schema';
-import { groups } from '@/database/schemas/groups.schema';
-import { userGroups } from '@/database/schemas/user-groups.schema';
-import { balances } from '@/database/schemas/balances.schema';
-import { settlements } from '@/database/schemas/settlements.schema';
 import {
   CreateTransactionDto,
   CreateQuickSplitDto,
   SettleBalancesDto,
 } from '@/common/dto/transaction.dto';
+import {
+  transactions,
+  transactionParticipants,
+  users,
+  groups,
+  userGroups,
+  balances,
+  settlements,
+} from '@/database/schemas';
+import type { Database } from '@/modules/database/database.providers';
 
 @Injectable()
 export class TransactionsService {

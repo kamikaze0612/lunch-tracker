@@ -5,17 +5,15 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { eq, and } from 'drizzle-orm';
-import { Database } from '../database/database.providers';
+
 import { databaseProviderToken } from '@/common/constants/provider_tokens.constants';
-import { groups } from '@/database/schemas/groups.schema';
-import { users } from '@/database/schemas/users.schema';
-import { userGroups } from '@/database/schemas/user-groups.schema';
-import { balances } from '@/database/schemas/balances.schema';
 import {
   CreateGroupDto,
   UpdateGroupDto,
   AddUserToGroupDto,
 } from '@/common/dto/group.dto';
+import { groups, users, userGroups, balances } from '@/database/schemas';
+import type { Database } from '@/modules/database/database.providers';
 
 @Injectable()
 export class GroupsService {
@@ -24,8 +22,9 @@ export class GroupsService {
     private readonly db: Database,
   ) {}
 
-  async createGroup(createGroupDto: CreateGroupDto, createdBy: number) {
-    // Check if creator exists
+  async createGroup(createGroupDto: CreateGroupDto) {
+    const { createdBy } = createGroupDto;
+
     const [creator] = await this.db
       .select()
       .from(users)
@@ -36,7 +35,6 @@ export class GroupsService {
     }
 
     return await this.db.transaction(async (tx) => {
-      // Create group
       const [group] = await tx
         .insert(groups)
         .values({
@@ -46,13 +44,11 @@ export class GroupsService {
         })
         .returning();
 
-      // Add creator to group
       await tx.insert(userGroups).values({
         userId: createdBy,
         groupId: group.id,
       });
 
-      // Initialize balance for creator
       await tx.insert(balances).values({
         userId: createdBy,
         groupId: group.id,
@@ -129,7 +125,6 @@ export class GroupsService {
       }> = [];
 
       for (const userId of addUserToGroupDto.userIds) {
-        // Check if user exists
         const [user] = await tx
           .select()
           .from(users)
@@ -139,7 +134,6 @@ export class GroupsService {
           throw new NotFoundException(`User with ID ${userId} not found`);
         }
 
-        // Check if user is already in group
         const [existingMember] = await tx
           .select()
           .from(userGroups)
@@ -153,7 +147,6 @@ export class GroupsService {
           );
         }
 
-        // Add user to group
         const [userGroup] = await tx
           .insert(userGroups)
           .values({
@@ -162,7 +155,6 @@ export class GroupsService {
           })
           .returning();
 
-        // Initialize balance for user
         await tx.insert(balances).values({
           userId: userId,
           groupId: groupId,

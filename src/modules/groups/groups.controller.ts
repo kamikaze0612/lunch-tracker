@@ -8,9 +8,8 @@ import {
   Delete,
   ParseIntPipe,
   UsePipes,
-  Query,
 } from '@nestjs/common';
-import { GroupsService } from './groups.service';
+
 import {
   CreateGroupDto,
   UpdateGroupDto,
@@ -21,17 +20,16 @@ import {
 } from '@/common/dto/group.dto';
 import { ZodValidationPipe } from '@/common/pipes/zod-validation.pipe';
 
+import { GroupsService } from './groups.service';
+
 @Controller('groups')
 export class GroupsController {
   constructor(private readonly groupsService: GroupsService) {}
 
   @Post()
   @UsePipes(new ZodValidationPipe(CreateGroupSchema))
-  create(
-    @Body() createGroupDto: CreateGroupDto,
-    @Query('createdBy', ParseIntPipe) createdBy: number,
-  ) {
-    return this.groupsService.createGroup(createGroupDto, createdBy);
+  create(@Body() createGroupDto: CreateGroupDto) {
+    return this.groupsService.createGroup(createGroupDto);
   }
 
   @Get()
