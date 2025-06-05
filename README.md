@@ -7,7 +7,7 @@ This API helps colleagues track lunch expenses and manage group balances. The sy
 ## Base URL
 
 ```
-http://localhost:3000
+http://localhost:8000
 ```
 
 ## API Endpoints
@@ -21,8 +21,8 @@ POST /users
 Content-Type: application/json
 
 {
-  "name": "Max Johnson",
-  "email": "max@company.com",
+  "name": "John Doe",
+  "email": "john@company.com",
   "avatar": "https://example.com/avatar.jpg" // optional
 }
 ```
