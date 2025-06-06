@@ -25,7 +25,6 @@ import type {
   Database,
   Transaction,
 } from '@/modules/database/database.providers';
-import { PgTransaction } from 'drizzle-orm/pg-core';
 
 @Injectable()
 export class TransactionsService {

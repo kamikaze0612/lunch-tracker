@@ -5,10 +5,11 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
-import { Database } from '../database/database.providers';
+
 import { databaseProviderToken } from '@/common/constants/provider_tokens.constants';
-import { users } from '@/database/schemas/users.schema';
 import { CreateUserDto, UpdateUserDto } from '@/common/dto/user.dto';
+import { users } from '@/database/schemas/users.schema';
+import type { Database } from '@/modules/database/database.providers';
 
 @Injectable()
 export class UsersService {

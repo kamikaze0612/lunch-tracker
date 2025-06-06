@@ -15,7 +15,7 @@ import {
   ApiBody,
   ApiQuery,
 } from '@nestjs/swagger';
-import { TransactionsService } from './transactions.service';
+
 import {
   CreateTransactionDto,
   CreateQuickSplitDto,
@@ -25,6 +25,8 @@ import {
   SettleBalancesSchema,
 } from '@/common/dto/transaction.dto';
 import { ZodValidationPipe } from '@/common/pipes/zod-validation.pipe';
+
+import { TransactionsService } from './transactions.service';
 
 @ApiTags('transactions')
 @Controller('transactions')

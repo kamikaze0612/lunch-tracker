@@ -15,7 +15,7 @@ import {
   ApiParam,
   ApiBody,
 } from '@nestjs/swagger';
-import { UsersService } from './users.service';
+
 import {
   CreateUserDto,
   UpdateUserDto,
@@ -23,6 +23,8 @@ import {
   UpdateUserSchema,
 } from '@/common/dto/user.dto';
 import { ZodValidationPipe } from '@/common/pipes/zod-validation.pipe';
+
+import { UsersService } from './users.service';
 
 @ApiTags('users')
 @Controller('users')
