@@ -115,7 +115,9 @@ export class GroupsService {
   }
 
   async addUsersToGroup(groupId: number, addUserToGroupDto: AddUserToGroupDto) {
-    const group = await this.findGroupById(groupId);
+    await this.findGroupById(groupId);
+
+    console.log({ addUserToGroupDto });
 
     return await this.db.transaction(async (tx) => {
       const results: Array<{
@@ -173,7 +175,7 @@ export class GroupsService {
   }
 
   async removeUserFromGroup(groupId: number, userId: number) {
-    const group = await this.findGroupById(groupId);
+    await this.findGroupById(groupId);
 
     const [userGroup] = await this.db
       .select()

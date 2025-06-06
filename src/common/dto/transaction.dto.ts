@@ -63,7 +63,7 @@ export const TransactionSummarySchema = z.object({
 
 // Settlement DTOs
 export const SettleBalancesSchema = z.object({
-  groupId: z.number(),
+  settledBy: z.number(),
   description: z.string().optional(),
 });
 

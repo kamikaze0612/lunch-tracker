@@ -4,7 +4,7 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { eq, and, desc, count } from 'drizzle-orm';
+import { eq, and, desc, count, sql } from 'drizzle-orm';
 
 import { databaseProviderToken } from '@/common/constants/provider_tokens.constants';
 import {
@@ -21,7 +21,11 @@ import {
   balances,
   settlements,
 } from '@/database/schemas';
-import type { Database } from '@/modules/database/database.providers';
+import type {
+  Database,
+  Transaction,
+} from '@/modules/database/database.providers';
+import { PgTransaction } from 'drizzle-orm/pg-core';
 
 @Injectable()
 export class TransactionsService {
@@ -31,7 +35,6 @@ export class TransactionsService {
   ) {}
 
   async createTransaction(createTransactionDto: CreateTransactionDto) {
-    // Validate group exists
     const [group] = await this.db
       .select()
       .from(groups)
@@ -41,7 +44,6 @@ export class TransactionsService {
       throw new NotFoundException('Group not found');
     }
 
-    // Validate payer is in group
     const [payerInGroup] = await this.db
       .select()
       .from(userGroups)
@@ -56,7 +58,6 @@ export class TransactionsService {
       throw new BadRequestException('Payer is not a member of this group');
     }
 
-    // Validate all participants are in group
     for (const participant of createTransactionDto.participants) {
       const [participantInGroup] = await this.db
         .select()
@@ -75,7 +76,6 @@ export class TransactionsService {
       }
     }
 
-    // Validate total amounts match
     const totalParticipantAmount = createTransactionDto.participants.reduce(
       (sum, p) => sum + parseFloat(p.shareAmount),
       0,
@@ -89,7 +89,6 @@ export class TransactionsService {
     }
 
     return await this.db.transaction(async (tx) => {
-      // Create transaction
       const [transaction] = await tx
         .insert(transactions)
         .values({
@@ -101,7 +100,6 @@ export class TransactionsService {
         })
         .returning();
 
-      // Create transaction participants
       const participantData = createTransactionDto.participants.map((p) => ({
         transactionId: transaction.id,
         userId: p.userId,
@@ -110,10 +108,7 @@ export class TransactionsService {
 
       await tx.insert(transactionParticipants).values(participantData);
 
-      // Update balances
       await this.updateBalances(tx, createTransactionDto);
-
-      return await this.getTransactionById(transaction.id);
     });
   }
 
@@ -137,10 +132,9 @@ export class TransactionsService {
   }
 
   private async updateBalances(
-    tx: Database,
+    tx: Transaction,
     transactionData: CreateTransactionDto,
   ) {
-    // Update payer's balance (they get positive amount minus their share)
     const payerShare = transactionData.participants.find(
       (p) => p.userId === transactionData.paidBy,
     );
@@ -151,7 +145,7 @@ export class TransactionsService {
     await tx
       .update(balances)
       .set({
-        balance: `(balance::numeric + ${payerBalance})::text`,
+        balance: sql`(${balances.balance}::numeric + ${payerBalance})::numeric`,
         lastUpdated: new Date(),
       })
       .where(
@@ -159,15 +153,15 @@ export class TransactionsService {
           eq(balances.userId, transactionData.paidBy),
           eq(balances.groupId, transactionData.groupId),
         ),
-      );
+      )
+      .returning();
 
-    // Update all participants' balances (they get negative amounts)
     for (const participant of transactionData.participants) {
       if (participant.userId !== transactionData.paidBy) {
         await tx
           .update(balances)
           .set({
-            balance: `(balance::numeric - ${participant.shareAmount})::text`,
+            balance: sql`(${balances.balance}::numeric - ${participant.shareAmount})::numeric`,
             lastUpdated: new Date(),
           })
           .where(
@@ -235,7 +229,6 @@ export class TransactionsService {
       .limit(limit)
       .offset(offset);
 
-    // Get participant count for each transaction
     const enrichedTransactions = await Promise.all(
       transactionsList.map(async (transaction) => {
         const [{ count: participantCount }] = await this.db
@@ -254,7 +247,6 @@ export class TransactionsService {
   }
 
   async getGroupBalanceSheet(groupId: number) {
-    // Validate group exists
     const [group] = await this.db
       .select()
       .from(groups)
@@ -293,28 +285,23 @@ export class TransactionsService {
     };
   }
 
-  async settleBalances(
-    settleBalancesDto: SettleBalancesDto,
-    settledBy: number,
-  ) {
-    // Validate group exists
+  async settleBalances(settleBalancesDto: SettleBalancesDto, groupId: number) {
     const [group] = await this.db
       .select()
       .from(groups)
-      .where(eq(groups.id, settleBalancesDto.groupId));
+      .where(eq(groups.id, groupId));
 
     if (!group) {
       throw new NotFoundException('Group not found');
     }
 
-    // Validate settler is in group
     const [settlerInGroup] = await this.db
       .select()
       .from(userGroups)
       .where(
         and(
-          eq(userGroups.userId, settledBy),
-          eq(userGroups.groupId, settleBalancesDto.groupId),
+          eq(userGroups.userId, settleBalancesDto.settledBy),
+          eq(userGroups.groupId, groupId),
         ),
       );
 
@@ -323,26 +310,23 @@ export class TransactionsService {
     }
 
     return await this.db.transaction(async (tx) => {
-      // Reset all balances to 0
       await tx
         .update(balances)
         .set({
           balance: '0.00',
           lastUpdated: new Date(),
         })
-        .where(eq(balances.groupId, settleBalancesDto.groupId));
+        .where(eq(balances.groupId, groupId));
 
-      // Create settlement record
       const [settlement] = await tx
         .insert(settlements)
         .values({
-          groupId: settleBalancesDto.groupId,
-          settledBy: settledBy,
+          groupId: groupId,
+          settledBy: settleBalancesDto.settledBy,
           description: settleBalancesDto.description,
         })
         .returning();
 
-      // Get settlement with user and group names
       const [enrichedSettlement] = await tx
         .select({
           id: settlements.id,

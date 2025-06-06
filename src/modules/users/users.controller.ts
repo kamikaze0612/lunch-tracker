@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   ParseIntPipe,
-  UsePipes,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -61,8 +60,9 @@ export class UsersController {
   })
   @ApiResponse({ status: 201, description: 'User successfully created' })
   @ApiResponse({ status: 400, description: 'Invalid input data' })
-  @UsePipes(new ZodValidationPipe(CreateUserSchema))
-  create(@Body() createUserDto: CreateUserDto) {
+  create(
+    @Body(new ZodValidationPipe(CreateUserSchema)) createUserDto: CreateUserDto,
+  ) {
     return this.usersService.createUser(createUserDto);
   }
 
@@ -147,10 +147,9 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'User successfully updated' })
   @ApiResponse({ status: 400, description: 'Invalid input data' })
   @ApiResponse({ status: 404, description: 'User not found' })
-  @UsePipes(new ZodValidationPipe(UpdateUserSchema))
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body(new ZodValidationPipe(UpdateUserSchema)) updateUserDto: UpdateUserDto,
   ) {
     return this.usersService.updateUser(id, updateUserDto);
   }

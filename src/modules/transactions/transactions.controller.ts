@@ -5,7 +5,6 @@ import {
   Body,
   Param,
   ParseIntPipe,
-  UsePipes,
   Query,
 } from '@nestjs/common';
 import {
@@ -96,8 +95,10 @@ export class TransactionsController {
   @ApiResponse({ status: 201, description: 'Transaction successfully created' })
   @ApiResponse({ status: 400, description: 'Invalid input data' })
   @ApiResponse({ status: 404, description: 'Group or user not found' })
-  @UsePipes(new ZodValidationPipe(CreateTransactionSchema))
-  create(@Body() createTransactionDto: CreateTransactionDto) {
+  create(
+    @Body(new ZodValidationPipe(CreateTransactionSchema))
+    createTransactionDto: CreateTransactionDto,
+  ) {
     return this.transactionsService.createTransaction(createTransactionDto);
   }
 
@@ -156,8 +157,10 @@ export class TransactionsController {
   })
   @ApiResponse({ status: 400, description: 'Invalid input data' })
   @ApiResponse({ status: 404, description: 'Group or user not found' })
-  @UsePipes(new ZodValidationPipe(CreateQuickSplitSchema))
-  createQuickSplit(@Body() createQuickSplitDto: CreateQuickSplitDto) {
+  createQuickSplit(
+    @Body(new ZodValidationPipe(CreateQuickSplitSchema))
+    createQuickSplitDto: CreateQuickSplitDto,
+  ) {
     return this.transactionsService.createQuickSplit(createQuickSplitDto);
   }
 
@@ -349,16 +352,12 @@ export class TransactionsController {
     description: 'Invalid input data or no balances to settle',
   })
   @ApiResponse({ status: 404, description: 'Group not found' })
-  @UsePipes(new ZodValidationPipe(SettleBalancesSchema))
   settleBalances(
     @Param('groupId', ParseIntPipe) groupId: number,
-    @Body() settleBalancesDto: SettleBalancesDto,
-    @Query('settledBy', ParseIntPipe) settledBy: number,
+    @Body(new ZodValidationPipe(SettleBalancesSchema))
+    settleBalancesDto: SettleBalancesDto,
   ) {
-    return this.transactionsService.settleBalances(
-      settleBalancesDto,
-      settledBy,
-    );
+    return this.transactionsService.settleBalances(settleBalancesDto, groupId);
   }
 
   @Get('group/:groupId/settlements')

@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   ParseIntPipe,
-  UsePipes,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -63,8 +62,10 @@ export class GroupsController {
   })
   @ApiResponse({ status: 201, description: 'Group successfully created' })
   @ApiResponse({ status: 400, description: 'Invalid input data' })
-  @UsePipes(new ZodValidationPipe(CreateGroupSchema))
-  create(@Body() createGroupDto: CreateGroupDto) {
+  create(
+    @Body(new ZodValidationPipe(CreateGroupSchema))
+    createGroupDto: CreateGroupDto,
+  ) {
     return this.groupsService.createGroup(createGroupDto);
   }
 
@@ -228,10 +229,10 @@ export class GroupsController {
     status: 404,
     description: 'Group not found or some users not found',
   })
-  @UsePipes(new ZodValidationPipe(AddUserToGroupSchema))
   addUsers(
     @Param('id', ParseIntPipe) id: number,
-    @Body() addUserToGroupDto: AddUserToGroupDto,
+    @Body(new ZodValidationPipe(AddUserToGroupSchema))
+    addUserToGroupDto: AddUserToGroupDto,
   ) {
     return this.groupsService.addUsersToGroup(id, addUserToGroupDto);
   }
@@ -290,10 +291,10 @@ export class GroupsController {
   @ApiResponse({ status: 200, description: 'Group successfully updated' })
   @ApiResponse({ status: 400, description: 'Invalid input data' })
   @ApiResponse({ status: 404, description: 'Group not found' })
-  @UsePipes(new ZodValidationPipe(UpdateGroupSchema))
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateGroupDto: UpdateGroupDto,
+    @Body(new ZodValidationPipe(UpdateGroupSchema))
+    updateGroupDto: UpdateGroupDto,
   ) {
     return this.groupsService.updateGroup(id, updateGroupDto);
   }

@@ -13,7 +13,7 @@ export const UpdateGroupSchema = z.object({
 });
 
 export const AddUserToGroupSchema = z.object({
-  userIds: z.array(z.number()).min(1),
+  userIds: z.number().array(),
 });
 
 // Response DTOs
