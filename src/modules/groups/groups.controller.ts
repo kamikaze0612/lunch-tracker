@@ -24,7 +24,7 @@ import {
   UpdateGroupSchema,
   AddUserToGroupSchema,
 } from '@/common/dto/group.dto';
-import { ZodValidationPipe } from '@/common/pipes/zod-validation.pipe';
+import { ZodValidationPipe } from '@/pipes/zod-validation.pipe';
 
 import { GroupsService } from './groups.service';
 

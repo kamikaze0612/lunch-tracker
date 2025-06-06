@@ -22,7 +22,7 @@ import {
   CreateUserSchema,
   UpdateUserSchema,
 } from '@/common/dto/user.dto';
-import { ZodValidationPipe } from '@/common/pipes/zod-validation.pipe';
+import { ZodValidationPipe } from '@/pipes/zod-validation.pipe';
 
 import { UsersService } from './users.service';
 

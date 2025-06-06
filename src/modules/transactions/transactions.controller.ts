@@ -24,7 +24,7 @@ import {
   CreateQuickSplitSchema,
   SettleBalancesSchema,
 } from '@/common/dto/transaction.dto';
-import { ZodValidationPipe } from '@/common/pipes/zod-validation.pipe';
+import { ZodValidationPipe } from '@/pipes/zod-validation.pipe';
 
 import { TransactionsService } from './transactions.service';
 
