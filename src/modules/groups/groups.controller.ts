@@ -23,7 +23,7 @@ import {
   CreateGroupSchema,
   UpdateGroupSchema,
   AddUserToGroupSchema,
-} from '@/common/dto/group.dto';
+} from '@/modules/groups/dto/group.dto';
 import { ZodValidationPipe } from '@/pipes/zod-validation.pipe';
 
 import { GroupsService } from './groups.service';

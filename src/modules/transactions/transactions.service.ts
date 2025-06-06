@@ -6,12 +6,12 @@ import {
 } from '@nestjs/common';
 import { eq, and, desc, count, sql } from 'drizzle-orm';
 
-import { databaseProviderToken } from '@/common/constants/provider_tokens.constants';
+import { databaseProviderToken } from '@/constants/provider_tokens.constants';
 import {
   CreateTransactionDto,
   CreateQuickSplitDto,
   SettleBalancesDto,
-} from '@/common/dto/transaction.dto';
+} from '@/modules/transactions/dto/transaction.dto';
 import {
   transactions,
   transactionParticipants,

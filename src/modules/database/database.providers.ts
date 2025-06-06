@@ -14,7 +14,7 @@ import { schema } from '@/database/schemas';
 import {
   databaseClientProviderToken,
   databaseProviderToken,
-} from '@/common/constants/provider_tokens.constants';
+} from '@/constants/provider_tokens.constants';
 
 export const databaseProviders = [
   {

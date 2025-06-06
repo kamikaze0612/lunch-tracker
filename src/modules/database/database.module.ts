@@ -1,7 +1,7 @@
 import { Global, Inject, Module } from '@nestjs/common';
 import type { Sql } from 'postgres';
 
-import { databaseClientProviderToken } from '@/common/constants/provider_tokens.constants';
+import { databaseClientProviderToken } from '@/constants/provider_tokens.constants';
 
 import { databaseProviders } from './database.providers';
 

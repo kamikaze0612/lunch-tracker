@@ -6,12 +6,12 @@ import {
 } from '@nestjs/common';
 import { eq, and } from 'drizzle-orm';
 
-import { databaseProviderToken } from '@/common/constants/provider_tokens.constants';
+import { databaseProviderToken } from '@/constants/provider_tokens.constants';
 import {
   CreateGroupDto,
   UpdateGroupDto,
   AddUserToGroupDto,
-} from '@/common/dto/group.dto';
+} from '@/modules/groups/dto/group.dto';
 import { groups, users, userGroups, balances } from '@/database/schemas';
 import type { Database } from '@/modules/database/database.providers';
 

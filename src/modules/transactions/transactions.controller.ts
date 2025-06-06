@@ -23,7 +23,7 @@ import {
   CreateTransactionSchema,
   CreateQuickSplitSchema,
   SettleBalancesSchema,
-} from '@/common/dto/transaction.dto';
+} from '@/modules/transactions/dto/transaction.dto';
 import { ZodValidationPipe } from '@/pipes/zod-validation.pipe';
 
 import { TransactionsService } from './transactions.service';

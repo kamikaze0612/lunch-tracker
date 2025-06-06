@@ -6,8 +6,8 @@ import {
 } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 
-import { databaseProviderToken } from '@/common/constants/provider_tokens.constants';
-import { CreateUserDto, UpdateUserDto } from '@/common/dto/user.dto';
+import { databaseProviderToken } from '@/constants/provider_tokens.constants';
+import { CreateUserDto, UpdateUserDto } from '@/modules/users/dto/user.dto';
 import { users } from '@/database/schemas/users.schema';
 import type { Database } from '@/modules/database/database.providers';
 

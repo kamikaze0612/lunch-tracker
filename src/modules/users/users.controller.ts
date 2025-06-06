@@ -21,7 +21,7 @@ import {
   UpdateUserDto,
   CreateUserSchema,
   UpdateUserSchema,
-} from '@/common/dto/user.dto';
+} from '@/modules/users/dto/user.dto';
 import { ZodValidationPipe } from '@/pipes/zod-validation.pipe';
 
 import { UsersService } from './users.service';
